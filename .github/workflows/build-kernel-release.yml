@@ -10,18 +10,28 @@ on:
   #    - main  # Trigger on push to the main branch
   workflow_dispatch:
     inputs:
-      build_a12:
-        description: 'Build Android 12 kernel?'
+      build_a12_5_10:
+        description: 'Build Android 12 5.10 kernels?'
         required: true
         type: boolean
         default: true
-      build_a13:
-        description: 'Build Android 13 kernel?'
+      build_a13_5_10:
+        description: 'Build Android 13 5.10 kernels?'
         required: true
         type: boolean
         default: true
-      build_a14:
-        description: 'Build Android 14 kernel?'
+      build_a13_5_15:
+        description: 'Build Android 13 5.15 kernels?'
+        required: true
+        type: boolean
+        default: true
+      build_a14_5_15:
+        description: 'Build Android 14 5.15 kernels?'
+        required: true
+        type: boolean
+        default: true
+      build_a14_6_1:
+        description: 'Build Android 14 6.1 kernels?'
         required: true
         type: boolean
         default: true
@@ -32,29 +42,41 @@ on:
         default: false
 
 jobs:
-  build-kernel-a12:
-    uses: ./.github/workflows/build-kernel-a12.yml
+  build-kernel-a12-5-10:
+    uses: ./.github/workflows/build-kernel-a12-5-10.yml
     secrets: inherit
-    if: ${{ github.event.inputs.build_a12 == 'true' || github.event.inputs.build_a12 == '' }}
+    if: ${{ github.event.inputs.build_a12_5_10 == 'true' || github.event.inputs.build_a12_5_10 == '' }}
 
-  build-kernel-a13:
-    uses: ./.github/workflows/build-kernel-a13.yml
+  build-kernel-a13-5-10:
+    uses: ./.github/workflows/build-kernel-a13-5-10.yml
     secrets: inherit
-    if: ${{ github.event.inputs.build_a13 == 'true' || github.event.inputs.build_a13 == '' }}
+    if: ${{ github.event.inputs.build_a13_5_10 == 'true' || github.event.inputs.build_a13_5_10 == '' }}
 
-  build-kernel-a14:
-    uses: ./.github/workflows/build-kernel-a14.yml
+  build-kernel-a13-5-15:
+    uses: ./.github/workflows/build-kernel-a13-5-15.yml
     secrets: inherit
-    if: ${{ github.event.inputs.build_a14 == 'true' || github.event.inputs.build_a14 == '' }}
+    if: ${{ github.event.inputs.build_a13_5_15 == 'true' || github.event.inputs.build_a13_5_15 == '' }}
+
+  build-kernel-a14-5-15:
+    uses: ./.github/workflows/build-kernel-a14-5-15.yml
+    secrets: inherit
+    if: ${{ github.event.inputs.build_a14_5_15 == 'true' || github.event.inputs.build_a14_5_15 == '' }}
+
+  build-kernel-a14-6-1:
+    uses: ./.github/workflows/build-kernel-a14-6-1.yml
+    secrets: inherit
+    if: ${{ github.event.inputs.build_a14_6-1 == 'true' || github.event.inputs.build_a14_6-1 == '' }}
 
   trigger-release:
     runs-on: ubuntu-latest
     timeout-minutes: 2160  # Set maximum timeout
     needs:
-        - build-kernel-a12
-        - build-kernel-a13
-        - build-kernel-a14  # Ensure the release only runs after the build jobs complete or are skipped
-    if: ${{ github.event.inputs.make_release == 'true' && needs.build-kernel-a12.result == 'success' && needs.build-kernel-a13.result == 'success' && needs.build-kernel-a14.result == 'success' }}
+        - build-kernel-a12-5-10
+        - build-kernel-a13-5-10
+        - build-kernel-a13-5-15
+        - build-kernel-a14-5-15
+        - build-kernel-a14-6-1
+    if: ${{ github.event.inputs.make_release == 'true' }}
     env:
       REPO_OWNER: TheWildJames
       REPO_NAME: GKI_KernelSU_SUSFS
@@ -121,33 +143,44 @@ jobs:
             git tag $NEW_TAG
             git push origin $NEW_TAG
 
-      # Download Artifacts for A12 (Only if A12 Build is successful or input is true or empty)
-      - name: Download Artifacts for A12 (Only if A12 Build is successful or skipped)
-        if: ${{ needs.build-kernel-a12.result == 'success' }}
+      - name: Download Artifacts for A12 5.10
+        if: ${{ github.event.inputs.build_a12_5_10 == 'true' }}
         uses: actions/download-artifact@v4
-        with:
-          name: kernel-artifacts-a12
+        with: 
+          name: kernel-artifacts-a12-5-10
           path: ./downloaded-artifacts
 
-# Download Artifacts for A13 (Only if A13 Build is successful or input is true or empty)
-      - name: Download Artifacts for A13 (Only if A13 Build is successful or skipped)
-        if: ${{ needs.build-kernel-a13.result == 'success' }}
+      - name: Download Artifacts for A13 5.10
+        if: ${{ github.event.inputs.build_a13_5_10 == 'true' }}
         uses: actions/download-artifact@v4
         with:
-          name: kernel-artifacts-a13
+          name: kernel-artifacts-a13-5-10
           path: ./downloaded-artifacts
 
-# Download Artifacts for A14 (Only if A14 Build is successful or input is true or empty)
-      - name: Download Artifacts for A14 (Only if A14 Build is successful or skipped)
-        if: ${{ needs.build-kernel-a14.result == 'success' }}
+      - name: Download Artifacts for A13 5.15
+        if: ${{ github.event.inputs.build_a13_5_15 == 'true' }}
         uses: actions/download-artifact@v4
         with:
-          name: kernel-artifacts-a14
+          name: kernel-artifacts-a13-5-15
+          path: ./downloaded-artifacts
+
+      - name: Download Artifacts for A14 5.15
+        if: ${{ github.event.inputs.build_a14_5_15 == 'true' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: kernel-artifacts-a14-5-15
+          path: ./downloaded-artifacts
+
+      - name: Download Artifacts for A14 6.1
+        if: ${{ github.event.inputs.build_a14_6_1 == 'true' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: kernel-artifacts-a14-6-1
           path: ./downloaded-artifacts
 
       # Create GitHub Release and upload files if make_release is true
       - name: Create GitHub Release
-        if: ${{ github.event.inputs.make_release == 'true' && needs.build-kernel-a12.result == 'success' && needs.build-kernel-a13.result == 'success' && needs.build-kernel-a14.result == 'success' }}  # Only run if make_release is true and all build jobs succeeded
+        if: ${{ github.event.inputs.make_release == 'true' }}
         uses: softprops/action-gh-release@v1
         with:
           files: ./downloaded-artifacts/*

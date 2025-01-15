@@ -79,10 +79,6 @@ jobs:
       - name: Build for all configurations
         run: |
           CONFIG="${{ matrix.config.android_version }}-${{ matrix.config.kernel_version }}-${{ matrix.config.os_patch_level }}"
-          ANDROID_VERSION="${{ matrix.config.android_version }}"
-          KERNEL_VERSION="${{ matrix.config.kernel_version }}"
-          SUB_LEVEL="${{ matrix.config.sub_level }}"
-          DATE="${{ matrix.config.os_patch_level }}"
 
           echo "Creating folder for configuration: $CONFIG..."
           mkdir -p "$CONFIG"

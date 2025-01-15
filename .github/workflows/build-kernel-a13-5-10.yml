@@ -4,7 +4,7 @@ on:
   workflow_call:  # This allows this workflow to be called from another workflow
 
 jobs:
-  build-kernel-a13-kernelsu-susfs:
+  build-kernel-a13-5-10-kernelsu-susfs:
     runs-on: ubuntu-22.04
     timeout-minutes: 2160  # Set maximum timeout
 

@@ -4,7 +4,7 @@ on:
   workflow_call:  # This allows this workflow to be called from another workflow
   
 jobs:
-  build-kernel-a12-kernelsu-susfs:
+  build-kernel-a12-5-10-kernelsu-susfs:
     runs-on: ubuntu-22.04
     timeout-minutes: 2160  # Set maximum timeout
 
@@ -246,7 +246,7 @@ jobs:
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: kernel-artifacts-a12
+          name: kernel-artifacts-a12-5-10
           path: |
             *.zip
             *.img

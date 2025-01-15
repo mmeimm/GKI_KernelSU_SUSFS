@@ -11,27 +11,27 @@ jobs:
       matrix:
         config:
           - android_version: android12
-            kernel_version: 5.10
+            kernel_version: "5.10"
             sub_level: 198
             os_patch_level: 2024-01
           - android_version: android12
-            kernel_version: 5.10
+            kernel_version: "5.10"
             sub_level: 205
             os_patch_level: 2024-03
           - android_version: android12
-            kernel_version: 5.10
+            kernel_version: "5.10"
             sub_level: 209
             os_patch_level: 2024-05
           - android_version: android12
-            kernel_version: 5.10
+            kernel_version: "5.10"
             sub_level: 218
             os_patch_level: 2024-08
           - android_version: android12
-            kernel_version: 5.10
+            kernel_version: "5.10"
             sub_level: 226
             os_patch_level: 2024-11
           - android_version: android12
-            kernel_version: 5.10
+            kernel_version: "5.10"
             sub_level: X
             os_patch_level: lts
 
@@ -79,6 +79,10 @@ jobs:
       - name: Build for all configurations
         run: |
           CONFIG="${{ matrix.config.android_version }}-${{ matrix.config.kernel_version }}-${{ matrix.config.os_patch_level }}"
+          ANDROID_VERSION="${{ matrix.config.android_version }}"
+          KERNEL_VERSION="${{ matrix.config.kernel_version }}"
+          SUB_LEVEL="${{ matrix.config.sub_level }}"
+          DATE="${{ matrix.config.os_patch_level }}"
 
           echo "Creating folder for configuration: $CONFIG..."
           mkdir -p "$CONFIG"
